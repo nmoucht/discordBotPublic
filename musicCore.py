@@ -3,7 +3,8 @@ import discord
 import asyncio
 import os
 import random
-
+from fileInterface import deleteDownloadedYoutubeFiles
+from interfaceYoutube import YoutubeInterface
 youtube_dl.utils.bug_reports_message = lambda: ''
 
 ytdl_format_options = {
@@ -92,6 +93,68 @@ class MusicQueue:
             self.pop()
             random.shuffle(self.queue)
             self.queue.insert(0, top)
+    def size(self):
+        return len(self.queue)
+    
+    def filterByTags(self, tags, playlistInfo, isRev):
+        if(len(self.queue)==0):
+            return 0
+        originalSize = len(self.queue)
+        newQueue = [self.queue[0]]
+        for i in range(1,len(self.queue)):
+            inTag = False 
+            for tag in tags:
+                if tag.lower() in [tag.lower() for tag in playlistInfo.getTagsForLink(self.queue[i].url)]:
+                    inTag= True
+                    break
+            if(inTag):
+                if(not isRev):
+                    newQueue.append(self.queue[i])
+            else:
+                if(isRev):
+                    newQueue.append(self.queue[i])
+        self.queue = newQueue
+        return originalSize - len(self.queue)
+
+    def filterByKeywords(self, keywords, playlistInfo, isRev):
+        if(len(self.queue)==0):
+            return 0
+        originalSize = len(self.queue)
+        newQueue = [self.queue[0]]
+        for i in range(1,len(self.queue)):
+            inKeyword = False
+            for keyword in keywords:
+                if keyword.lower() in playlistInfo.getTitleAndDescriptionForLink(self.queue[i].url).lower():
+                    inKeyword = True
+                    break
+            if(inKeyword):
+                if(not isRev):
+                    newQueue.append(self.queue[i])
+            else:
+                if(isRev):
+                    newQueue.append(self.queue[i])
+        self.queue = newQueue
+        return originalSize - len(self.queue)
+    
+    def searchByKeywords(self, keywords, playlistInfo, isRev):
+        if(len(self.queue)==0):
+            return 0
+        originalSize = len(self.queue)
+        newQueue = [self.queue[0]]
+        for i in range(1,len(self.queue)):
+            inKeyword = True
+            for keyword in keywords:
+                if keyword.lower() not in playlistInfo.getTitleAndDescriptionForLink(self.queue[i].url).lower():
+                    inKeyword = False
+                    break
+            if(inKeyword):
+                if(not isRev):
+                    newQueue.append(self.queue[i])
+            else:
+                if(isRev):
+                    newQueue.append(self.queue[i])
+        self.queue = newQueue
+        return originalSize - len(self.queue)
 
 class MusicPlayer:
     player = ""
@@ -152,12 +215,11 @@ class MusicCore(object):
                 await asyncio.sleep(1)
             self.queue.pop()
             self.player = MusicPlayer("", "")
-            for filename in os.listdir("."):
-                if(filename.endswith(".mp4") or filename.endswith(".websm") or filename.endswith(".m4a") or filename.startswith("youtube")):
-                    os.remove(filename)
+            deleteDownloadedYoutubeFiles()
         self.voice.stop()
         self.isPlaying = False
         await self.voice.disconnect()
+        await self.textChannel.send("Leaving, queue is empty")
     
     async def stop(self):
         if(self.player.isEmpty()):
@@ -175,6 +237,15 @@ class MusicCore(object):
 
     def shuffle(self):
         self.queue.shuffle()
+    
+    def tags(self, tags, playlistInfo, isRev):
+        return [self.queue.filterByTags(tags, playlistInfo, isRev), self.queue.size()]
+
+    def keywords(self, keywords, playlistInfo, isRev):
+        return [self.queue.filterByKeywords(keywords, playlistInfo, isRev), self.queue.size()]
+    
+    def search(self, keywords, playlistInfo, isRev):
+        return [self.queue.searchByKeywords(keywords, playlistInfo, isRev), self.queue.size()]
 
     def isInitialized(self):
         return self.isInit
