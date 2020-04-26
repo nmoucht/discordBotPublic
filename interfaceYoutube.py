@@ -59,7 +59,7 @@ class YoutubeInterface(object):
             playlist = json.loads(requests.get(api_url).content)
             allVids.extend(playlist['items'])
         
-            try:
+            try: 
                 next_page_token = playlist['nextPageToken']
                 api_url = link + '&pageToken={}'.format(next_page_token)
             except:
@@ -80,7 +80,11 @@ def main():
     YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 
     yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH, YOUTUBE_PLAYLIST)
-    print(yt.getVideoListForKeywords(["jojo"]))
+    # print(len(yt.getVideoListForKeywords([""])))
+    with open('youtubeTags.txt', 'a') as filehandle:
+        for listitem in yt.getVideoListForKeywords([""]):
+            filehandle.write('%s-\n' % listitem)
+
 
 if __name__ == "__main__":
     main()

@@ -138,7 +138,7 @@ class MusicCore(object):
         try: 
             self.voice = await self.channel.connect()
         except:
-            print("already connected")
+            print("Already connected")
         while(not self.queue.isEmpty()):
             self.player = MusicPlayer(self.queue.top().url, bot)
             await self.textChannel.send(self.queue.top().url)
@@ -146,7 +146,7 @@ class MusicCore(object):
             try:
                 self.voice.play(p, after=lambda e: print('Player error: %s' % e) if e else None)
             except:
-                print("playing")
+                print("Already playing")
             
             while self.voice.is_playing():
                 await asyncio.sleep(1)
@@ -155,13 +155,13 @@ class MusicCore(object):
             for filename in os.listdir("."):
                 if(filename.endswith(".mp4") or filename.endswith(".websm") or filename.endswith(".m4a") or filename.startswith("youtube")):
                     os.remove(filename)
-
         self.voice.stop()
+        self.isPlaying = False
         await self.voice.disconnect()
     
     async def stop(self):
         if(self.player.isEmpty()):
-            print("ok")
+            print("Nothing is plying")
         else:
             self.voice.stop()
             await self.voice.disconnect()
@@ -169,13 +169,12 @@ class MusicCore(object):
 
     def skip(self, bot):
         if(self.player.isEmpty()):
-            print("ok")
+            print("Nothing is playing")
         else:
             self.voice.stop()
 
     def shuffle(self):
         self.queue.shuffle()
-
 
     def isInitialized(self):
         return self.isInit

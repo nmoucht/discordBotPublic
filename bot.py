@@ -12,13 +12,14 @@ import asyncio
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
-TEST_GUILD = os.getenv('DISCORD_GUILD')#os.getenv('DISCORD_GUILD_TEST')
+TEST_GUILD = os.getenv('DISCORD_GUILD')#os.getenv('DISCORD_GUILD_TEST')#
 YOUTUBE_WATCH = os.getenv('YOUTUBE_WATCH_LINK')
 YOUTUBE_PLAYLIST = os.getenv('YOUTUBE_BSMNT_PLAYLIST')
 YOUTUBE_API_LINK = os.getenv('YOUTUBE_API_LINK')
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 fun = os.getenv('FUN')
 funback = os.getenv('FUN_BACK')
+helpLink = os.getenv('HELP_LINK')
 client = discord.Client()
 yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH, YOUTUBE_PLAYLIST)
 bot = commands.Bot(command_prefix = ",")
@@ -75,7 +76,7 @@ async def on_message(message):
                 mybot.mc = MusicCore(message.author.voice.channel, message.channel)
             mybot.mc.shuffle()
             await message.channel.send("Shuffled songs")
-            
-
+        if("help" in message.content):
+            await message.channel.send(helpLink)    
 
 client.run(TOKEN)
