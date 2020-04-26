@@ -17,6 +17,8 @@ YOUTUBE_WATCH = os.getenv('YOUTUBE_WATCH_LINK')
 YOUTUBE_PLAYLIST = os.getenv('YOUTUBE_BSMNT_PLAYLIST')
 YOUTUBE_API_LINK = os.getenv('YOUTUBE_API_LINK')
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+fun = os.getenv('FUN')
+funback = os.getenv('FUN_BACK')
 client = discord.Client()
 yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH, YOUTUBE_PLAYLIST)
 bot = commands.Bot(command_prefix = ",")
@@ -44,8 +46,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     print(message.content)
-    if(message.content == "Is Alex gay?"):
-        await message.channel.send("Alex is Gay")
+    if(message.content == fun):
+        await message.channel.send(funback)
     if("bs!" in message.content):
         if("keyword" in message.content):
             vids = yt.getVideoListForKeywords(message.content[message.content.find("keyword ")+8:].split(" "))
