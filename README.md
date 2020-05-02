@@ -2,6 +2,8 @@ Commands:
 
 bs!play- specify a playlist, song, or don't specify any to add entire default playlist to queue
 
+bs!playnext- specify a song to put next in the queue
+
 bs!stop- stops playing and empties queue
 
 bs!skip- stops playing and pops top of queue

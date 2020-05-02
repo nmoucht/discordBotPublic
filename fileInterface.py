@@ -14,6 +14,7 @@ def getTagsForYoutubeVideos():
     lines = f.readlines()
     lines.pop(0)
     for line in lines:
+        line = line.replace(" ","")
         video = line[line.find("=")+1:line.rfind("-")]
         lineTags = line[line.rfind("-")+1:].strip('\n')
         tags = lineTags.split(",")

@@ -25,7 +25,12 @@ class YoutubePlaylist(object):
     def __init__(self, vids, tags, watchLink):
         self.vids = {}
         for vid in vids:
-            self.vids[watchLink+vid['snippet']['resourceId']['videoId']] = (YoutubeVid(vid['snippet']['title'], vid['snippet']['description'], vid['snippet']['resourceId']['videoId'], tags[vid['snippet']['resourceId']['videoId']]))
+            videoTags = [""]
+            try:
+                videoTags = tags[vid['snippet']['resourceId']['videoId']]
+            except:
+                ok = 0
+            self.vids[watchLink+vid['snippet']['resourceId']['videoId']] = (YoutubeVid(vid['snippet']['title'], vid['snippet']['description'], vid['snippet']['resourceId']['videoId'], videoTags))
 
     # def getMatchesForKeywords(self, link, keywords):
     #     vidList = []
@@ -109,7 +114,7 @@ def main():
 
     yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH, YOUTUBE_PLAYLIST)
 
-
+    
 
 if __name__ == "__main__":
     main()

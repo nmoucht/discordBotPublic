@@ -50,7 +50,14 @@ async def on_message(message):
     if(message.content == fun):
         await message.channel.send(funback)
     if("bs!" in message.content):
-        if("play" in message.content):
+        if("playnext" in message.content):
+            if(message.content[message.content.find("playnext")+8:].strip()!=""):
+                if("https://www.youtube.com/watch?v=" in message.content):
+                    if(not mybot.mc.isInitialized()):
+                        mybot.mc = MusicCore(message.author.voice.channel, message.channel)
+                    mybot.mc.addToQueueNext(message.content[message.content.find("https://www.youtube.com/watch?v="):], bot)
+                    await message.channel.send("Added video next in the queue")
+        elif("play" in message.content):
             if(message.content[message.content.find("play")+4:].strip()==""):
                 vids = yt.getPlaylistForLink(YOUTUBE_API_LINK, defaultPlaylist, YOUTUBE_API_KEY)
                 if(not mybot.mc.isInitialized()):
@@ -58,6 +65,11 @@ async def on_message(message):
                 for url in vids:
                     mybot.mc.addToQueue(url, bot)
                 await message.channel.send("Added "+str(len(vids))+" to the queue")
+            elif("https://www.youtube.com/watch?v=" in message.content):
+                if(not mybot.mc.isInitialized()):
+                    mybot.mc = MusicCore(message.author.voice.channel, message.channel)
+                mybot.mc.addToQueue(message.content[message.content.find("https://www.youtube.com/watch?v="):], bot)
+                await message.channel.send("Added video to the queue")
         elif("search" in message.content):
             if(not mybot.mc.isInitialized()):
                 mybot.mc = MusicCore(message.author.voice.channel, message.channel)

@@ -23,7 +23,8 @@ ytdl_format_options = {
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp4',
         'preferredquality': '192',
-    }]
+    }],
+    'cachedir' : False    
 }
 
 ffmpeg_options = {
@@ -84,6 +85,12 @@ class MusicQueue:
     def push(self, item):
         self.queue.append(item)
     
+    def pushNext(self, item):
+        if(len(self.queue) < 1):
+            self.queue.append(item)
+            return
+        self.queue.insert(1,item)
+    
     def isEmpty(self):
         return len(self.queue)==0
     
@@ -103,16 +110,15 @@ class MusicQueue:
         newQueue = [self.queue[0]]
         for i in range(1,len(self.queue)):
             inTag = False 
-            for tag in tags:
-                if tag.lower() in [tag.lower() for tag in playlistInfo.getTagsForLink(self.queue[i].url)]:
-                    inTag= True
-                    break
-            if(inTag):
-                if(not isRev):
-                    newQueue.append(self.queue[i])
-            else:
+            tagsSet = set(tags)
+            vidtagsSet = set([tagnew.lower() for tagnew in playlistInfo.getTagsForLink(self.queue[i].url)])
+            if(len(tagsSet.intersection(vidtagsSet))==0):
                 if(isRev):
                     newQueue.append(self.queue[i])
+            else:
+                if(not isRev):
+                    newQueue.append(self.queue[i])
+                
         self.queue = newQueue
         return originalSize - len(self.queue)
 
@@ -193,6 +199,12 @@ class MusicCore(object):
 
     def addToQueue(self, url, bot):
         self.queue.push(MusicSong(url, "youtube"))
+        if(not self.isPlaying):
+            self.isPlaying = True
+            asyncio.ensure_future(self.play(bot))
+    
+    def addToQueueNext(self, url, bot):
+        self.queue.pushNext(MusicSong(url, "youtube"))
         if(not self.isPlaying):
             self.isPlaying = True
             asyncio.ensure_future(self.play(bot))
