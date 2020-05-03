@@ -125,7 +125,7 @@ def main():
     tags = getTagsForYoutubeVideos()
     lines = ["tags-Jojo, banger, anime, game, Persona, zombies, chill, upbeat, rock, jazz"]
     for vid in vids:
-        line = vid +"-"+yt.getTitleForLink(vid) +"-"
+        line = vid +"-*-"+yt.getTitleForLink(vid) +"-*-"
         try:
             count = len(tags[vid[vid.find("=")+1:]])
 
