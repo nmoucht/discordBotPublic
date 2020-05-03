@@ -106,6 +106,12 @@ async def on_message(message):
                 mybot.mc = MusicCore(message.author.voice.channel, message.channel)
             mybot.mc.shuffle()
             await message.channel.send("Shuffled songs")
+        elif("pause" in message.content):
+            mybot.mc.pause()
+            await message.channel.send("Paused song")
+        elif("resume" in message.content):
+            mybot.mc.resume()
+            await message.channel.send("Resumed song")
         elif("stop" in message.content):
             await mybot.mc.stop()
         elif("skip" in message.content):

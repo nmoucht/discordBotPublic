@@ -8,6 +8,10 @@ bs!stop- stops playing and empties queue
 
 bs!skip- stops playing and pops top of queue
 
+bs!pause- pauses playing of current song
+
+bs!resume- resumes playing of current song
+
 bs!shuffle- shuffles current queue
 
 bs!tag- removes songs of current queue that do not have any of the tags

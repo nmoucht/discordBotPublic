@@ -224,7 +224,7 @@ class MusicCore(object):
             except:
                 print("Already playing")
             
-            while self.voice.is_playing():
+            while self.voice.is_playing() or self.voice.is_paused():
                 await asyncio.sleep(1)
             self.queue.pop()
             self.player = MusicPlayer("", "")
@@ -247,6 +247,18 @@ class MusicCore(object):
             print("Nothing is playing")
         else:
             self.voice.stop()
+    
+    def pause(self):
+        if(self.player.isEmpty()):
+            print("Nothing is playing")
+        else:
+            self.voice.pause()
+
+    def resume(self):
+        if(self.player.isEmpty()):
+            print("Nothing is playing")
+        else:
+            self.voice.resume()
 
     def shuffle(self):
         self.queue.shuffle()
