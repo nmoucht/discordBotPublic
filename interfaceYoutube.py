@@ -5,7 +5,7 @@ import requests
 import json
 from dotenv import load_dotenv
 import os
-from fileInterface import getTagsForYoutubeVideos
+from fileInterface import getTagsForYoutubeVideos, writeTagsToFile
 
 class YoutubeVid(object):
     title = ""
@@ -60,6 +60,9 @@ class YoutubePlaylist(object):
     def getTitleAndDescriptionForLink(self,url):
         return self.vids[url].title + " " + self.vids[url].description
 
+    def getTitleForLink(self, url):
+        return self.vids[url].title
+
     def getTagsForLink(self, url):
         return [x.lower() for x in self.vids[url].tags]
 
@@ -69,7 +72,6 @@ class YoutubeInterface(object):
     watchLink = ""
     currentPlaylist = YoutubePlaylist([],[], "")
     currentPlaylistLink = ""
-
 
     # The class "constructor" - It's actually an initializer 
     def __init__(self, key, apiLink, watchLink):
@@ -102,6 +104,9 @@ class YoutubeInterface(object):
     def getTitleAndDescriptionForLink(self, url):
         return self.currentPlaylist.getTitleAndDescriptionForLink(url).lower()
     
+    def getTitleForLink(self, url):
+        return self.currentPlaylist.getTitleForLink(url).lower()
+
     def getTagsForLink(self, url):
         return self.currentPlaylist.getTagsForLink(url)
 
@@ -111,10 +116,28 @@ def main():
     YOUTUBE_PLAYLIST = os.getenv('YOUTUBE_BSMNT_PLAYLIST')
     YOUTUBE_API_LINK = os.getenv('YOUTUBE_API_LINK')
     YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
+    defaultPlaylist = os.getenv('YOUTUBE_BSMNT_PLAYLIST')
 
-    yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH, YOUTUBE_PLAYLIST)
+    yt = YoutubeInterface(YOUTUBE_API_KEY, YOUTUBE_API_LINK, YOUTUBE_WATCH)
 
-    
 
+    vids = yt.getPlaylistForLink(YOUTUBE_API_LINK, defaultPlaylist, YOUTUBE_API_KEY)
+    tags = getTagsForYoutubeVideos()
+    lines = ["tags-Jojo, banger, anime, game, Persona, zombies, chill, upbeat, rock, jazz"]
+    for vid in vids:
+        line = vid +"-"+yt.getTitleForLink(vid) +"-"
+        try:
+            count = len(tags[vid[vid.find("=")+1:]])
+
+            for tag in tags[vid[vid.find("=")+1:]]:
+                count -=1
+                if(count == 0):
+                    line += tag
+                else:
+                    line += tag + ","
+        except:
+            print("No tags")
+        lines.append(line)
+    writeTagsToFile(lines)
 if __name__ == "__main__":
     main()

@@ -100,6 +100,7 @@ class MusicQueue:
             self.pop()
             random.shuffle(self.queue)
             self.queue.insert(0, top)
+    
     def size(self):
         return len(self.queue)
     

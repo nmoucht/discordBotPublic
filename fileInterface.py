@@ -21,6 +21,13 @@ def getTagsForYoutubeVideos():
         dictOfTags[video] = tags
     return dictOfTags
 
+def writeTagsToFile(tagList):
+    load_dotenv()
+    tagTxt = os.getenv('TAGS_FILE')
+    f = open(tagTxt, "w")
+    for tagLine in tagList:
+        f.write(tagLine+'\n')
+
 
 def main():
     print(getTagsForYoutubeVideos())
