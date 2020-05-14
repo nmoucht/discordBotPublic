@@ -95,9 +95,11 @@ async def on_message(message):
             res = mybot.mc.tags(tags, yt, True)
             await message.channel.send("Removed "+str(res[0])+" from the queue. Size now "+str(res[1]))
         elif("tag" in message.content):
+            print("asdfsd")
             if(not mybot.mc.isInitialized()):
                 mybot.mc = MusicCore(message.author.voice.channel, message.channel)
             tags = [x.lower() for x in message.content[message.content.find("tag ")+4:].split(" ")]
+            print("asdfsd")
             res = mybot.mc.tags(tags, yt, False)
             await message.channel.send("Removed "+str(res[0])+" from the queue. Size now "+str(res[1]))
         
