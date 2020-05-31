@@ -4,6 +4,7 @@ import asyncio
 import os
 import random
 from fileInterface import deleteDownloadedYoutubeFiles
+from fileInterface import filePathForYoutubeLink
 from interfaceYoutube import YoutubeInterface
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -180,8 +181,12 @@ class MusicPlayer:
         return self.empty
     
     async def getPlayer(self):
+        filePath = filePathForYoutubeLink(self.url)
+        if(filePath != "" ):
+            print("playing locally")
+            return discord.FFmpegPCMAudio(filePath, **ffmpeg_options, executable="/Users/nikosm/Documents/discordBotPublic/ffmpeg")
+        print("not locally")
         return await YTDLSource.from_url(self.url, loop=self.bot.loop, stream=False)
-        
 
 class MusicCore(object):
     channel = ""
@@ -220,6 +225,7 @@ class MusicCore(object):
             await self.textChannel.send(self.queue.top().url)
             p = await self.player.getPlayer()
             try:
+                
                 self.voice.play(p, after=lambda e: print('Player error: %s' % e) if e else None)
             except:
                 print("Already playing")

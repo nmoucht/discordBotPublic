@@ -28,6 +28,30 @@ def writeTagsToFile(tagList):
     for tagLine in tagList:
         f.write(tagLine+'\n')
 
+def filePathForYoutubeLink(url):
+    load_dotenv()
+    youtubeFiles = os.getenv("LOCAL_VIDS")
+    vids = os.listdir(youtubeFiles)
+    for vid in vids:
+        print("youtube title:"+getTitleForLink(url))
+        print("local:"+vid[:vid.find("-")].lower())
+        if(vid[:vid.find("-")].lower() == getTitleForLink(url)):
+            return youtubeFiles+"/"+vid
+    return ""
+
+def getTitleForLink(url):
+    load_dotenv()
+    tagTxt = os.getenv('TAGS_FILE')
+    dictOfTags = {}
+    f = open(tagTxt, "r")
+    lines = f.readlines()
+    lines.pop(0)
+    for line in lines:
+        if(line.find(url)!=-1):
+            print(url)
+            print("sfdgdf")
+            return line[line.find("-*-")+3:line.rfind("-*-")]
+    return ""
 
 def main():
     print(getTagsForYoutubeVideos())
